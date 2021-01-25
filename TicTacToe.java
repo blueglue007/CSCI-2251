@@ -1,50 +1,72 @@
 import java.util.Scanner;
 
 
-class TicTacToe {
+public class TicTacToe {
 
-    private int[] board;
-    private int X = 1;
-    private int Y = 2;
-    private int EMPTY = 0;
+    private cell[][] board;
     private int step = 0;
     private boolean xTurn = true;
+
+
+    //public static void main(String[] args)
+    //{
+       //TicTacToe game = new TicTacToe();    // instantiate new TicTacToe object
+        //game.printBoard();                   // Print the game board on the screen
+        //game.play();                         // Play the game
+    //}
+
+    public TicTacToe() {
+        board = new cell[3][3];
+        for(int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = cell.EMPTY;
+            }
+        }
+    }
+
+    enum cell {
+        X, O, EMPTY;
+    }
 
     enum decision {
         WIN,DRAW,CONTINUE;
     }
 
     public void printBoard() {
-        for (int i = 0; i < 9; i++) {
-            switch(board[i]) {
-                case 1:
-                    System.out.print("X");
-                    break;
-                case 2:
-                    System.out.print("Y");
-                    break;
-                case 0:
-                    System.out.print(" ");
+        System.out.print("-------------\n| ");
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                switch(board[i][j]) {
+                    case X:
+                        System.out.print("X | ");
+                        break;
+                    case O:
+                        System.out.print("Y | ");
+                        break;
+                    case EMPTY:
+                        System.out.print("  | ");
+                }
             }
-            if (i%3 == 2) {
-                System.out.println();
+            if ( i < 2) {
+                System.out.print("\n-------------\n| ");
+            } else {
+                System.out.print("\n-------------\n");
             }
         }
 
-        //System.out.print("-------------");
     }
 
     public void printStatus() {
         if(gameStatus() == decision.CONTINUE) {
-            System.out.print("Continuing");
+            System.out.print("Continuing\n");
         } else if (gameStatus() == decision.WIN){
-            if(xTurn == true) {
-                System.out.print("X win");
+            if(xTurn == false) {
+                System.out.print("Play 1 win\n");
             } else {
-                System.out.print("Y win");
+                System.out.print("Play 2 win\n");
             }
         } else {
-            System.out.print("DRAW");
+            System.out.print("DRAW\n");
         }
     }
 
@@ -52,33 +74,29 @@ class TicTacToe {
         if (step == 9) {
             return decision.DRAW;
         }
-        int rowCount;
-        int colCount;
+        if(board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]) && board[0][0] != cell.EMPTY) {
+            return decision.WIN;
+        } else if(board[0][2].equals(board[1][1]) && board[0][2].equals(board[2][0]) && board[0][2] != cell.EMPTY) {
+            return decision.WIN;
+        }
         for (int i = 0; i < 3; i++) {
-            rowCount = board[3*i] + board[3*i+1] + board[3*i+2];
-            colCount = board[i] + board[i+3] + board[i+6];
-            if (rowCount == 3 || colCount ==3) {
+            if(board[i][0].equals(board[i][1]) && board[i][0].equals(board[i][2]) && board[i][0] != cell.EMPTY) {
                 return decision.WIN;
-            } else if (rowCount == 6 || colCount ==6) {
+            } else if (board[0][i].equals(board[1][i]) && board[0][i].equals(board[2][i]) && board[0][i] != cell.EMPTY) {
                 return decision.WIN;
             }
+
         }
         return decision.CONTINUE;
     }
 
-    public void TicTacToe() {
-        board = new int[9];
-        for(int i=0; i<9; i++) {
-            board[i] = 0;
-        }
-    }
 
     public boolean vaildMove(int x, int y) {
-        if(x<0||x>2||y>0||y>2) {
-            System.out.println("Invalid move.");
+        if(x<1||x>3||y<1||y>3) {
+            System.out.println("Out of range.");
             return false;
-        }else if (board[3*(x-1)+y-1] != 0) {
-            System.out.println("Invalid move.");
+        }else if (board[x-1][y-1] != cell.EMPTY) {
+            System.out.println( x + "," + y + " already taken.");
             return false;
         }
         return true;
@@ -88,36 +106,41 @@ class TicTacToe {
         int x,y;
         Scanner scan = new Scanner(System.in);
         while(gameStatus() == decision.CONTINUE) {
-            printBoard();
-
+            printStatus();
             if (xTurn) {
-                System.out.print("Player 1 make a move :");
+                System.out.print("player 1 Enter row : ");
                 x = scan.nextInt();
+                System.out.print("player 1 Enter column : ");
                 y = scan.nextInt();
 
                 while (!vaildMove(x, y)) {
-                    System.out.print("PLEASE Enter row and column :");
+                    System.out.print("PLEASE player 1 Enter row : ");
                     x = scan.nextInt();
+                    System.out.print("PLEASE player 1 Enter column : ");
                     y = scan.nextInt();
                 }
-                board[3*(x-1)+y-1] = 1;
+                board[x-1][y-1] = cell.X;
                 step++;
                 xTurn = false;
             } else {
-                System.out.print("Player 2 make a move :");
+                System.out.print("player 2 Enter row : ");
                 x = scan.nextInt();
+                System.out.print("player 2 Enter column : ");
                 y = scan.nextInt();
 
                 while (!vaildMove(x, y)) {
-                    System.out.print("PLEASE Enter row and column :");
+                    System.out.print("PLEASE player 2 Enter row : ");
                     x = scan.nextInt();
+                    System.out.print("PLEASE player 2 Enter column : ");
                     y = scan.nextInt();
                 }
-                board[3*(x-1)+y-1] = 2;
+                board[x-1][y-1] = cell.O;
                 step++;
                 xTurn = true;
             }
+            printBoard();
         }
-
+        printStatus();
     }
+
 }
