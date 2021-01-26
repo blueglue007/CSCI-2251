@@ -41,7 +41,7 @@ public class TicTacToe {
                         System.out.print("X | ");
                         break;
                     case O:
-                        System.out.print("Y | ");
+                        System.out.print("O | ");
                         break;
                     case EMPTY:
                         System.out.print("  | ");
